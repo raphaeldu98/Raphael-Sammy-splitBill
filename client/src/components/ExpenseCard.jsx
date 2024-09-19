@@ -1,9 +1,18 @@
 import { formatDateString } from "../compute/formatDateString";
+import { useDispatch } from "react-redux";
+import { deleteExpense } from "../store/groupSlice";
 
 
 export default function ExpenseCard({group, expense}){
+    const dispatch = useDispatch();
     const raphael = expense.paidFor.includes('Raphael') ? (expense.amount - (expense.amount / expense.paidFor.length)) : 0;
     const sammy = expense.paidFor.includes('Raphael') ? expense.amount - (expense.amount / expense.paidFor.length) : expense.amount;
+
+    const handleDelete = (groupId, expenseId) => {
+        const IDs = [groupId, expenseId];
+        dispatch(deleteExpense(IDs));
+    }
+
     return(
         <div className="p-4 cursor-pointer hover:bg-stone-900 rounded ">
             <div className="flex justify-between">
@@ -32,7 +41,7 @@ export default function ExpenseCard({group, expense}){
                 <p className="text-sm">{formatDateString(expense.time)}</p>
                 <button 
                         className="bg-[#ca4848] text-black px-4 rounded font-bold"
-                        onClick={()=>{}}
+                        onClick={()=>{handleDelete(group._id, expense._id)}}
                     >
                         delete
                 </button>

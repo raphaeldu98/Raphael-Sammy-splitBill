@@ -142,10 +142,67 @@ const fetchGroupById = async (req, res) => {
     }
 };
 
+const deleteExpense = async (req, res) => {
+    console.log('deleteExpense');
+    const { groupId, expenseId } = req.params;
+
+    console.log('!!!!', groupId, expenseId);
+    if (!groupId || !expenseId) {
+        return res.status(400).json({ message: "Group ID and Expense ID are required" });
+    }
+
+    try {
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        const expense = group.expensesHistory.id(expenseId);
+        if (!expense) {
+            return res.status(404).json({ message: "Expense not found" });
+        }
+
+        group.totalGroupSpending -= expense.amount;
+
+        const payer = group.groupMembers.find(member => member.name === expense.paidBy);
+        payer.currentBalance -= expense.amount;
+
+        const raphael = expense.paidFor.includes('Raphael') ? -(expense.amount / 2) : -expense.amount;
+        const sammy = expense.paidFor.includes('Raphael') ? expense.amount / 2 : expense.amount;
+
+        console.log('raphael', raphael);
+        console.log('sammy', sammy);
+        console.log('group.groupMembers', group.groupMembers);
+        group.groupMembers.forEach(member => {
+            if(member.name === 'Raphael'){
+                member.balance -= raphael;
+                console.log('member.balance', member.balance);
+            }else if(member.name === 'Sammy'){
+                member.balance -= sammy;
+                console.log('member.balance', member.balance);
+            }
+        });
+
+        expense.paidFor.forEach(memberName => {
+            const member = group.groupMembers.find(member => member.name === memberName);
+            member.currentBalance += expense.amount / expense.paidFor.length;
+        });
+
+        group.expensesHistory = group.expensesHistory.filter(exp => exp._id.toString() !== expenseId);
+
+        await group.save();
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
 module.exports = {
     createNewGroup,
     updateMembersAmount,
     getAllGroups,
     deleteGroup,
-    fetchGroupById
+    fetchGroupById,
+    deleteExpense
 };

@@ -6,7 +6,8 @@ const {
     updateMembersAmount,
     getAllGroups,
     deleteGroup,
-    fetchGroupById
+    fetchGroupById,
+    deleteExpense
 } = require("./controllers/group.controller.js")
 
 
@@ -34,3 +35,4 @@ app.post('/api/v1/update-members-amount', updateMembersAmount)
 app.get('/api/v1/groups', getAllGroups)
 app.delete('/api/v1/group/:groupId', deleteGroup)
 app.get('/api/v1/groups/:groupId', fetchGroupById)
+app.delete('/api/v1/group/:groupId/:expenseId', deleteExpense)
