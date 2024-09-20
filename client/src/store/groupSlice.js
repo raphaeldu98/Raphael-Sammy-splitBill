@@ -41,21 +41,27 @@ export const deleteGroup = createAsyncThunk(
 
 export const createExpense = createAsyncThunk(
     'groups/createExpense',
-    async(groupData)=>{
-        const response = fetch('http://localhost:8000/api/v1/update-members-amount',{
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(groupData)
-        })
-        if (!response.ok) {
-            throw new Error('Failed to create group');
-        }
-        return response.json();
+    async (groupData) => {
+      const response = await fetch('http://localhost:8000/api/v1/update-members-amount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(groupData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create group');
+      }
+  
+      const data = await response.json();
+  
+      // Call reload only after the response is successful and data is received
+      window.location.reload();
+  
+      return data;
     }
-
-);
+  );
 
 export const deleteExpense = createAsyncThunk(
     'groups/deleteExpense',
@@ -73,7 +79,7 @@ export const deleteExpense = createAsyncThunk(
         if(!response.ok){
             throw new Error('Failed to delete expense');
         }
-
+        window.location.reload();
         return expenseId;
     }
 );

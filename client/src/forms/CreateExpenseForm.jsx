@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createExpense, fetchGroups } from "../store/groupSlice";
+import { createExpense } from "../store/groupSlice"; // Fetch groups is not necessary here
 
 export default function CreateExpenseForm({
     setIsFormPageActive,
-    group
+    group,
+    refreshExpenses // Add refreshExpenses as a prop
 }) {
     const [expenseTitle, setExpenseTitle] = useState('');
-    const [expenseDate, setExpenseDate] = useState(Date.now());
+    const [expenseDate, setExpenseDate] = useState(new Date().toISOString().slice(0, 16));
     const [category, setCategory] = useState('');
     const [amount, setAmount] = useState('');
     const [payerId, setPayerId] = useState('');
@@ -22,16 +23,17 @@ export default function CreateExpenseForm({
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const expenseData = {
             expenseTitle,
-            time:expenseDate,
+            time: expenseDate,
             groupId: group._id,
             amountPaid: parseInt(amount),
             payerId: payerId,
             membersPaidFor: paidFor
         };
-        dispatch(createExpense(expenseData));
+        await dispatch(createExpense(expenseData)); // Create the expense
+        refreshExpenses(); // Refresh the expenses list after creation
         setIsFormPageActive(false);
     };
 
