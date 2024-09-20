@@ -2,6 +2,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
@@ -19,7 +20,7 @@ function App() {
     <Router>
       <NavBar/>
       <Routes>
-        <Route path="/" element={<Home/>}/>
+      <Route path="/" element={<Navigate to="/66eca6b9a92490bb0c6eb37a/expenses" replace />} />
         <Route path="/groups" element={<GroupList/>} />
         <Route path="/:groupId" element={<TrackNavBar/>} >
           <Route path="expenses" element={<Expenses/>}/>

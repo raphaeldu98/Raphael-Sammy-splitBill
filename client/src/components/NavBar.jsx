@@ -13,9 +13,9 @@ export default function NavBar(){
                     Raphael & Sammy
                 </Link>
             
-                <Link to="/groups" className=" text-md text-[#48CA9B] hover:bg-stone-900 rounded hover:text-white px-5 py-2">
+                {/* <Link to="/groups" className=" text-md text-[#48CA9B] hover:bg-stone-900 rounded hover:text-white px-5 py-2">
                     Groups
-                </Link>
+                </Link> */}
             </div>
             
         </div>

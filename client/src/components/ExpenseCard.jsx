@@ -27,7 +27,7 @@ export default function ExpenseCard({group, expense}){
             </div>
             <div className="flex justify-between">
                 <p 
-                    className="text-sm text-gray-500"
+                    className="text-sm text-gray-500 w-1/2"
                 >
                     Paid by <span className="font-semibold text-gray-400">{expense.paidBy}</span> for 
                     &nbsp;{expense.paidFor.map((ex, index) => 
@@ -38,7 +38,7 @@ export default function ExpenseCard({group, expense}){
                         {`${ex}${expense.paidFor.length > index+1 ? ", " : ""}`}
                     </span>)}
                 </p>
-                <p className="text-sm">{formatDateString(expense.time)}</p>
+                <p className="text-sm ml-10">{formatDateString(expense.time)}</p>
                 <button 
                         className="bg-[#ca4848] text-black px-4 rounded font-bold"
                         onClick={()=>{handleDelete(group._id, expense._id)}}
