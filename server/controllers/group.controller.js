@@ -41,57 +41,39 @@ const updateMembersAmount = async (req, res) => {
             return res.status(404).json({ message: "Payer not found" });
         }
 
-        let isPayerInvolve = membersPaidFor.includes(payerId);
-        let splitAmount;
-        if(isPayerInvolve){
-            splitAmount = amountPaid / (membersPaidFor.length-1);
-        }else{
-            splitAmount = amountPaid / membersPaidFor.length;
-        }
+        // Calculate the individual share each member has to pay
+        const totalMembers = membersPaidFor.length;
+        const individualShare = amountPaid / totalMembers;
 
-
-        const membersPaidForNames = membersPaidFor.map(memberId => {
-            const member = group.groupMembers.id(memberId);
-            return member.name;
-        });
-
-        const raphael = membersPaidForNames.includes('Raphael') ? -(amountPaid / 2) : -amountPaid;
-        const sammy = membersPaidForNames.includes('Raphael') ? amountPaid / 2 : amountPaid;
-
+        // Update balances for each member
         group.groupMembers.forEach(member => {
-            if(member.name === 'Raphael'){
-                member.balance += raphael;
-            }else if(member.name === 'Sammy'){
-                member.balance += sammy;
+            // Check if the member is in the membersPaidFor list
+            if (membersPaidFor.includes(member._id.toString())) {
+                // Subtract the individual share from the member's current balance
+                member.balance += individualShare;
+            }
+            if (member._id.toString() === payerId) {
+                // Add the total amount paid to the payer's current balance
+                member.balance -= amountPaid;
+                // console.log('member.paid', member.name);
             }
         });
 
-        let paidFor = []
-        let sum = 0;
-        membersPaidFor.forEach(memberId => {
-            const member = group.groupMembers.id(memberId);
-            paidFor.push(member.name);
-            if(member && member!==payerId) {
-                member.currentBalance -= splitAmount;
-                sum+=splitAmount;
-            }
-        });
-
-        payer.currentBalance += sum;
-        group.totalGroupSpending += amountPaid;
-
-        const newExpenses = {
+        // Add the expense to the group's expenses history
+        const newExpense = {
             expenseTitle,
             time,
             paidBy: payer.name,
-            paidFor,
-            amount:amountPaid,
-        }
+            paidFor: membersPaidFor.map(id => group.groupMembers.id(id).name),
+            amount: amountPaid
+        };
 
-        group.expensesHistory.unshift(newExpenses);
+        group.expensesHistory.unshift(newExpense);
+
+        // Update the group's total spending
+        group.totalGroupSpending += amountPaid;
 
         await group.save();
-
         res.status(200).json(group);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -143,10 +125,8 @@ const fetchGroupById = async (req, res) => {
 };
 
 const deleteExpense = async (req, res) => {
-    console.log('deleteExpense');
     const { groupId, expenseId } = req.params;
 
-    console.log('!!!!', groupId, expenseId);
     if (!groupId || !expenseId) {
         return res.status(400).json({ message: "Group ID and Expense ID are required" });
     }
@@ -162,32 +142,31 @@ const deleteExpense = async (req, res) => {
             return res.status(404).json({ message: "Expense not found" });
         }
 
-        group.totalGroupSpending -= expense.amount;
+        // Calculate the amount each member owes based on the original expense
+        const totalMembers = expense.paidFor.length;
+        const individualShare = expense.amount / totalMembers;
 
+        // Adjust the balances of the payer and each member
         const payer = group.groupMembers.find(member => member.name === expense.paidBy);
-        payer.currentBalance -= expense.amount;
+        if (!payer) {
+            return res.status(404).json({ message: "Payer not found" });
+        }
 
-        const raphael = expense.paidFor.includes('Raphael') ? -(expense.amount / 2) : -expense.amount;
-        const sammy = expense.paidFor.includes('Raphael') ? expense.amount / 2 : expense.amount;
-
-        console.log('raphael', raphael);
-        console.log('sammy', sammy);
-        console.log('group.groupMembers', group.groupMembers);
         group.groupMembers.forEach(member => {
-            if(member.name === 'Raphael'){
-                member.balance -= raphael;
-                console.log('member.balance', member.balance);
-            }else if(member.name === 'Sammy'){
-                member.balance -= sammy;
-                console.log('member.balance', member.balance);
+            // If the member was included in the paidFor list, revert their current balance
+            if (expense.paidFor.includes(member.name)) {
+                member.balance -= individualShare;
+            }
+            // Subtract the total amount from the payer's balance
+            if (member.name === payer.name) {
+                member.balance += expense.amount;
             }
         });
 
-        expense.paidFor.forEach(memberName => {
-            const member = group.groupMembers.find(member => member.name === memberName);
-            member.currentBalance += expense.amount / expense.paidFor.length;
-        });
+        // Revert the group's total spending
+        group.totalGroupSpending -= expense.amount;
 
+        // Remove the expense from the history
         group.expensesHistory = group.expensesHistory.filter(exp => exp._id.toString() !== expenseId);
 
         await group.save();
@@ -195,7 +174,7 @@ const deleteExpense = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 
 module.exports = {

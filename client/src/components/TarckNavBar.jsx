@@ -12,7 +12,7 @@ export default function TrackNavBar(){
             setIsLoading(true)
             const response = await fetch(`http://localhost:8000/api/v1/groups/${groupId}`);
             const data = await response.json();
-            console.log("data", data)
+            // console.log("data", data)
             setGroup(data);
             setIsLoading(false);
         }

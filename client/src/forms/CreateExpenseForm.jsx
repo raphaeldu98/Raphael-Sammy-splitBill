@@ -8,7 +8,7 @@ export default function CreateExpenseForm({
     refreshExpenses // Add refreshExpenses as a prop
 }) {
     const [expenseTitle, setExpenseTitle] = useState('');
-    const [expenseDate, setExpenseDate] = useState(new Date().toISOString().slice(0, 16));
+    const [expenseDate, setExpenseDate] = useState(new Date().toISOString());
     const [category, setCategory] = useState('');
     const [amount, setAmount] = useState('');
     const [payerId, setPayerId] = useState('');

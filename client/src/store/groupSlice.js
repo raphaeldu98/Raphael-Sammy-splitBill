@@ -66,16 +66,16 @@ export const createExpense = createAsyncThunk(
 export const deleteExpense = createAsyncThunk(
     'groups/deleteExpense',
     async(IDs)=>{
-        console.log(IDs);
+        // console.log(IDs);
         const groupId = IDs[0];
         const expenseId = IDs[1];
-        console.log(groupId, expenseId);
+        // console.log(groupId, expenseId);
         const url = `http://localhost:8000/api/v1/group/${groupId}/${expenseId}`;
-        console.log(url);
+        // console.log(url);
         const response = await fetch(`http://localhost:8000/api/v1/group/${groupId}/${expenseId}`, {
             method: 'DELETE'
         });
-        console.log(response);
+        // console.log(response);
         if(!response.ok){
             throw new Error('Failed to delete expense');
         }
