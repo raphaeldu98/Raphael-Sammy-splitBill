@@ -25,19 +25,6 @@ export default function Balances() {
 
         // Dispatch create expense action
         await dispatch(createExpense(expenseData));
-
-        // // Update balances to 0 for both members
-        // const updatedBalances = group.groupMembers.map(member => {
-        //     if (member.name === 'Raphael' || member.name === 'Sammy') {
-        //         return { ...member, balance: 0 };
-        //     }
-        //     return member;
-        // });
-
-        // // Dispatch update group balances action
-        // await dispatch(updateGroupBalances({ groupId: group._id, updatedBalances }));
-
-        // // Optionally, you can fetch the updated group data to refresh the UI
     };
 
     return (
