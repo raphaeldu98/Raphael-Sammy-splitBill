@@ -5,6 +5,7 @@ export const fetchGroups = createAsyncThunk(
     'groups/fetchGroups', async () => {
     const response = await fetch('http://localhost:8000/api/v1/groups');
     const data = await response.json();
+    console.log('Fetched Groups !!:', data); // Check the response here
     return data;
 });
 
@@ -84,6 +85,24 @@ export const deleteExpense = createAsyncThunk(
     }
 );
 
+export const updateExpense = createAsyncThunk(
+    'groups/updateExpense',
+    async ({ groupId, expenseId, updatedExpense }) => {
+        const response = await fetch(`http://localhost:8000/api/v1/group/${groupId}/${expenseId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedExpense),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update expense');
+        }
+        const data = await response.json();
+        console.log('Updated Group:', data); // Check the response here
+        return data; // Return updated group data
+    }
+);
 
 const groupSlice = createSlice({
     name: 'groups',
@@ -125,6 +144,21 @@ const groupSlice = createSlice({
             state.groups = state.groups.filter(group => group._id !== action.payload);
         })
         .addCase(deleteGroup.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.error.message;
+        })
+        .addCase(updateExpense.pending, (state) => {
+            state.status = 'loading';
+        })
+        .addCase(updateExpense.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            const updatedGroup = action.payload;
+            const groupIndex = state.groups.findIndex(group => group._id === updatedGroup._id);
+            if (groupIndex !== -1) {
+                state.groups[groupIndex] = updatedGroup; // Update the group in the state
+            }
+        })
+        .addCase(updateExpense.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.error.message;
         });

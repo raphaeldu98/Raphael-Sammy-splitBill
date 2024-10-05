@@ -177,6 +177,41 @@ const deleteExpense = async (req, res) => {
     }
 };
 
+const updateExpense = async (req, res) => {
+    const { groupId, expenseId } = req.params;
+    const { expenseTitle, amount, time, category, paidBy, paidFor } = req.body;
+
+    if (!groupId || !expenseId) {
+        return res.status(400).json({ message: "Group ID and Expense ID are required" });
+    }
+
+    try {
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        const expense = group.expensesHistory.id(expenseId);
+        if (!expense) {
+            return res.status(404).json({ message: "Expense not found" });
+        }
+
+        // Update expense details
+        expense.expenseTitle = expenseTitle || expense.expenseTitle;
+        expense.amount = amount || expense.amount;
+        expense.time = time || expense.time;
+        expense.category = category || expense.category;
+        expense.paidBy = paidBy || expense.paidBy;
+        expense.paidFor = paidFor || expense.paidFor;
+
+        await group.save();
+
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 module.exports = {
     createNewGroup,
@@ -184,5 +219,6 @@ module.exports = {
     getAllGroups,
     deleteGroup,
     fetchGroupById,
-    deleteExpense
+    deleteExpense,
+    updateExpense
 };

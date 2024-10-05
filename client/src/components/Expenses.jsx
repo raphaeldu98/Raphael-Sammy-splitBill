@@ -25,6 +25,7 @@ export default function Expenses() {
 
     const refreshExpenses = () => {
         dispatch(fetchGroups(group._id)); // Fetch updated group data after adding/deleting an expense
+        console.log('Refreshing expenses...');
     };
 
     const handleSelectExpense = (expense, isChecked) => {

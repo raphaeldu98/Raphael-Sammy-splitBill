@@ -24,6 +24,10 @@ export default function CreateExpenseForm({
         'Shopping',
         'Transportation',
         'Entertainment',
+        'Travel',
+        'Health',
+        'Pets',
+        'Payments',
         'Other'
     ];
 
@@ -50,7 +54,7 @@ export default function CreateExpenseForm({
             expenseTitle,
             time: expenseDate,
             groupId: group._id,
-            amountPaid: parseInt(amount),
+            amountPaid: parseFloat(amount),
             payerId: payerId,
             membersPaidFor: paidFor,
             category: category || 'Other'

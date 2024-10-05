@@ -20,7 +20,8 @@ export default function Balances() {
             groupId: group._id,
             amountPaid: Math.abs(sammy.balance),
             payerId: sammy._id, // Sammy is paying off
-            membersPaidFor: [raphael._id] // Paying off for Raphael
+            membersPaidFor: [raphael._id], // Paying off for Raphael
+            category:'Payments'
         };
 
         // Dispatch create expense action
