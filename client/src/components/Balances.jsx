@@ -1,10 +1,11 @@
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createExpense } from "../store/groupSlice"; // Assume these actions exist to handle expense creation and balance update
 
 export default function Balances() {
     const [group] = useOutletContext();
     const dispatch = useDispatch();
+    const navigate = useNavigate(); 
 
     // Function to handle "Paid Off" logic
     const handlePaidOff = async () => {
@@ -21,12 +22,55 @@ export default function Balances() {
             amountPaid: Math.abs(sammy.balance),
             payerId: sammy._id, // Sammy is paying off
             membersPaidFor: [raphael._id], // Paying off for Raphael
-            category:'Payments'
+            category: 'Payment',
         };
+        
+        navigate(`/${group._id}/expenses`);
 
         // Dispatch create expense action
         await dispatch(createExpense(expenseData));
     };
+
+    // Function to calculate balances based on the expense history
+    const calculateBalances = () => {
+        const balances = {};
+
+        // Initialize balances for all group members
+        group.groupMembers.forEach(member => {
+            balances[member._id] = 0;
+        });
+
+        // Loop through each expense in the history
+        group.expensesHistory.forEach(expense => {
+            const numPaidFor = expense.paidFor.length;
+            const individualShare = expense.amount / numPaidFor;
+
+            // Deduct the total amount from the payer's balance
+            const payer = group.groupMembers.find(member => member.name === expense.paidBy);
+            // console.log('payer', payer);
+            if (payer) {
+                balances[payer._id] -= expense.amount;
+            }
+
+            // console.log('individualShare', individualShare);
+            // console.log('balances', balances);
+
+            // Add each individual's share back to their balance
+            expense.paidFor.forEach(memberName => {
+                const member = group.groupMembers.find(m => m.name === memberName);
+                if (member) {
+                    balances[member._id] += individualShare;
+                }
+            });
+        });
+
+        // console.log('balances', balances);
+
+        return balances;
+    };
+
+    // Get the calculated balances
+    const memberBalances = calculateBalances();
 
     return (
         <div className="mt-5 w-full pb-5">
@@ -49,13 +93,13 @@ export default function Balances() {
                                     {member.name}:
                                     <span
                                         className={`rounded py-[0.5px] px-4 ml-3 text-white ${
-                                            member.balance == 0 && "bg-orange-500"
-                                        } ${member.balance > 0 && "bg-green-800"} ${
-                                            member.balance < 0 && "bg-red-800"
+                                            memberBalances[member._id] == 0 && "bg-orange-500"
+                                        } ${memberBalances[member._id] > 0 && "bg-green-800"} ${
+                                            memberBalances[member._id] < 0 && "bg-red-800"
                                         }`}
                                     >
                                         {group.symbol}
-                                        {member.balance}
+                                        {memberBalances[member._id].toFixed(2)}
                                     </span>
                                 </li>
                             ))}

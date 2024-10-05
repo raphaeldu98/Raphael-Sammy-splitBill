@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { formatDateString } from "../compute/formatDateString";
 import { useDispatch } from "react-redux";
 import { deleteExpense, updateExpense } from "../store/groupSlice"; // Update with correct action
@@ -8,6 +9,7 @@ export default function ExpenseCard({ group, expense, refreshExpenses, handleSel
     const [isChecked, setIsChecked] = useState(false);
     const [editMode, setEditMode] = useState(false); // Toggle edit mode
     const [editedExpense, setEditedExpense] = useState({ ...expense }); // State for edited expense
+    const navigate = useNavigate(); 
 
     const categoryOptions = [
         'Food',
@@ -21,6 +23,7 @@ export default function ExpenseCard({ group, expense, refreshExpenses, handleSel
         'Travel',
         'Health',
         'Pets',
+        'Payment',
         'Other'
     ];
 
@@ -73,6 +76,8 @@ export default function ExpenseCard({ group, expense, refreshExpenses, handleSel
         // setTimeout(() => {
         //     refreshExpenses(); 
         // }, 3000);
+        navigate(`/`);
+
         console.log('refreshed');
     };
 
