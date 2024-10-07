@@ -57,7 +57,8 @@ export default function CreateExpenseForm({
             amountPaid: parseFloat(amount),
             payerId: payerId,
             membersPaidFor: paidFor,
-            category: category || 'Other'
+            category: category || 'Other',
+            paid: false
         };
         await dispatch(createExpense(expenseData)); // Create the expense
         refreshExpenses(); // Refresh the expenses list after creation

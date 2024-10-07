@@ -39,6 +39,10 @@ const expensesHistorySchema = mongoose.Schema({
     category:{
         type: String,
         required: true,
+    },
+    paid: {
+        type: Boolean,
+        default: false // Default to unpaid
     }
 }, {timestamps: true})
 

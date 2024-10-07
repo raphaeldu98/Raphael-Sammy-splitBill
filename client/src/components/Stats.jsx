@@ -11,6 +11,11 @@ export default function Stats() {
     const [categoryData, setCategoryData] = useState({});
     const [totalSpending, setTotalSpending] = useState(0);
 
+    let spend =  0;
+    group.expensesHistory.forEach(expense => {
+        spend += expense.amount;
+    }, 0);
+
     useEffect(() => {
         if (group.expensesHistory) {
             // Calculate category data
@@ -52,7 +57,7 @@ export default function Stats() {
 
                     <div className="mt-5">
                         <p className="text-md text-gray-300">Total group spendings</p>
-                        <p className="text-xl">{`${group.symbol} ${group.totalGroupSpending.toFixed(2)}`}</p>
+                        <p className="text-xl">{`${group.symbol} ${spend}`}</p>
                     </div>
                 </div>
 

@@ -27,8 +27,8 @@ export default function ExpenseCard({ group, expense, refreshExpenses, handleSel
         'Other'
     ];
 
-    const raphael = expense.paidFor.includes('Raphael') ? (expense.amount - (expense.amount / expense.paidFor.length)) : 0;
-    const sammy = expense.paidFor.includes('Raphael') ? expense.amount - (expense.amount / expense.paidFor.length) : expense.amount;
+    const raphael = expense.paidFor.includes('Raphael') ? expense.amount / expense.paidFor.length : 0;
+    const sammy = expense.paidFor.includes('Sammy') ? expense.amount / expense.paidFor.length : 0;
 
     const handleDelete = async (groupId, expenseId) => {
         const IDs = [groupId, expenseId];

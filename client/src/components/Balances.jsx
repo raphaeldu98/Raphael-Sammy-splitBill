@@ -14,21 +14,35 @@ export default function Balances() {
 
         if (!raphael || !sammy) return;
 
+        const updatedExpenses = group.expensesHistory.map(expense => ({
+            ...expense,
+            paid: true, // Mark each expense as paid
+        }));
+
         // Create expense history entry
         const expenseData = {
             expenseTitle: 'Paid Off',
             time: new Date().toISOString(),
             groupId: group._id,
-            amountPaid: Math.abs(sammy.balance),
+            amountPaid: Math.abs(memberBalances[sammy._id]),
             payerId: sammy._id, // Sammy is paying off
             membersPaidFor: [raphael._id], // Paying off for Raphael
             category: 'Payment',
+            paid: true
         };
         
         navigate(`/${group._id}/expenses`);
 
         // Dispatch create expense action
         await dispatch(createExpense(expenseData));
+
+        for (const expense of updatedExpenses) {
+            await dispatch(updateExpense({
+                groupId: group._id,
+                expenseId: expense._id,
+                updatedExpense: { paid: true }
+            }));
+        }
     };
 
     // Function to calculate balances based on the expense history

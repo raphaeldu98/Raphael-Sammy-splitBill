@@ -24,7 +24,7 @@ const createNewGroup = async (req, res) => {
 
 
 const updateMembersAmount = async (req, res) => {
-    const { expenseTitle, groupId, time, payerId, amountPaid, membersPaidFor, category } = req.body;
+    const { expenseTitle, groupId, time, payerId, amountPaid, membersPaidFor, category, paid } = req.body;
 
     if (!expenseTitle || !time || !groupId || !payerId || typeof amountPaid !== 'number' || !Array.isArray(membersPaidFor)) {
         return res.status(400).json({ message: "Invalid input data" });
@@ -66,7 +66,8 @@ const updateMembersAmount = async (req, res) => {
             paidBy: payer.name,
             paidFor: membersPaidFor.map(id => group.groupMembers.id(id).name),
             amount: amountPaid,
-            category: category
+            category: category,
+            paid: paid
         };
 
         group.expensesHistory.unshift(newExpense);
