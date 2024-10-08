@@ -162,17 +162,6 @@ export default function ExpenseCard({ group, expense, refreshExpenses, handleSel
                                     {formatDateString(expense.time)}
                                 </p>
                             </div>
-                            {/* <div className="flex justify-end w-full mt-2">
-                                <button
-                                    className="bg-blue-500 text-white px-4 py-1 rounded mr-2"
-                                    onClick={(e) => { 
-                                        e.stopPropagation(); // Prevent triggering the card click event
-                                        handleEditToggle(); // Toggle edit mode
-                                    }}
-                                >
-                                    Edit
-                                </button>
-                            </div> */}
                         </div>
                     </div>
                 </>
