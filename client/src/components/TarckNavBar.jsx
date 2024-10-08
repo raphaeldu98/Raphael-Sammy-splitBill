@@ -26,7 +26,7 @@ export default function TrackNavBar(){
 
 
     return(
-        <div className="w-full px-56 mt-5">
+        <div className="w-full px-32 mt-5">
             <div className="bg-stone-800 max-w-max px-2 py-1 flex gap-3 rounded">
                 <NavLink 
                     to={`/${groupId}/expenses`} 

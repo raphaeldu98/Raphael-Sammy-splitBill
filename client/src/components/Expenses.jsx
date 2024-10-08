@@ -225,6 +225,16 @@ export default function Expenses() {
                             </div>
                         </div>
 
+                        {/* Toggle Paid Expenses */}
+                        <div className="text-center mt-5">
+                            <button
+                                className="text-sm text-[#48CA9B] hover:underline cursor-pointer"
+                                onClick={() => setShowPaidExpenses(!showPaidExpenses)}
+                            >
+                                {showPaidExpenses ? 'Hide' : 'Show'} Paid Expenses
+                            </button>
+                        </div>
+
                         <div>
                             {expensesHistory?.length ? (
                                 expensesHistory
@@ -252,16 +262,6 @@ export default function Expenses() {
                                     </span>
                                 </p>
                             )}
-                        </div>
-
-                        {/* Toggle Paid Expenses */}
-                        <div className="text-center mt-5">
-                            <button
-                                className="text-sm text-[#48CA9B] hover:underline cursor-pointer"
-                                onClick={() => setShowPaidExpenses(!showPaidExpenses)}
-                            >
-                                {showPaidExpenses ? 'Hide' : 'Show'} Paid Expenses
-                            </button>
                         </div>
                     </div>
                 )}

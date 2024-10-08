@@ -180,7 +180,7 @@ const deleteExpense = async (req, res) => {
 
 const updateExpense = async (req, res) => {
     const { groupId, expenseId } = req.params;
-    const { expenseTitle, amount, time, category, paidBy, paidFor } = req.body;
+    const { expenseTitle, amount, time, category, paidBy, paidFor, paid } = req.body;
 
     if (!groupId || !expenseId) {
         return res.status(400).json({ message: "Group ID and Expense ID are required" });
@@ -204,6 +204,7 @@ const updateExpense = async (req, res) => {
         expense.category = category || expense.category;
         expense.paidBy = paidBy || expense.paidBy;
         expense.paidFor = paidFor || expense.paidFor;
+        expense.paid = paid || expense.paid;
 
         await group.save();
 
